@@ -19,7 +19,7 @@ var app = express();
 // Config for middleware
 
 // Using morgan to log results
-app.use(Logger("dev"));
+app.use(logger("dev"));
 // BodyParser for submissions
 // =========should the extended be true or false? I seem to remember this being changed in class.==========
 app.use(bodyParser.urlencoded({
