@@ -103,28 +103,28 @@ app.get("articles/:id", function (req, res) {
 
 // route for saving or updating an Article's notes
 app.post("/articles/:id", function (req, res) {
-// create a new note and pass the req.body to the entry
-db.Note.create(req.body)
-    .then(function (dbNote) {
-        return db.Article.findOneAndUpdate({
-            _id: req.params.id
-        }, {
-            note: dbNote._id
-        }, {
-            new: true
+    // create a new note and pass the req.body to the entry
+    db.Note.create(req.body)
+        .then(function (dbNote) {
+            return db.Article.findOneAndUpdate({
+                _id: req.params.id
+            }, {
+                note: dbNote._id
+            }, {
+                new: true
+            });
+        })
+        .then(function (dbArticle) {
+            // sending the successfully updated article back to client
+            res.json(dbArticle);
+        })
+        .catch(function (err) {
+            // reporting errors (if any) to client
+            res.json(err);
         });
-    })
-    .then(function (dbArticle) {
-        // sending the successfully updated article back to client
-        res.json(dbArticle);
-    })
-    .catch(function (err) {
-        // reporting errors (if any) to client
-        res.json(err);
-    });
 });
 
 // starting the server.
-app.listen(PORT, function() {
+app.listen(PORT, function () {
     console.log("App running on port " + PORT + "!");
 })
