@@ -28,22 +28,27 @@ app.use(bodyParser.urlencoded({
 // use express.static to serve the public folder as a static directory
 app.use(express.static("public"));
 
+
+var MONGODB_URI = process.env.MONGODB_URI || 
+"mongodb://localhost/mongoHeadlines";
+
 // Setting mongoose to use promises instead of callbacks
 mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI, {
-    useMongoClient: true
-});
+mongoose.connect(MONGODB_URI);
 
 //   Routing
+app.get("/", function(req, res) {
+    res.send("./main.handlebars");
+  });
 
 // GET route for scraping the huffington post web site
 
 app.get("/scrape", function (req, res) {
-    axios.get("https://www.huffingtonpost.com/topic/weird-news").then(function (response) {
+    axios.get("https://www.nytimes.com/").then(function (response) {
         // loading html body to cheerio and saving to $ for shorthand selector
         var $ = cheerio.load(response.data);
         // grabbing the tags from the html
-        $("card__headline__text bn-clickable").each(function (i, element) {
+        $(".AssetHeadline-headline--1T0Wg AssetHeadline-type__2--3QaVO").each(function (i, element) {
             // saving an empty result object
             var result = {};
             // add the text and href of links and save as protperties of the result object
