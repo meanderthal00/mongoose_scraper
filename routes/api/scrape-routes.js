@@ -1,50 +1,18 @@
-// requires
-var express = require("express");
-var bodyParser = require("body-parser");
-var logger = require("morgan");
-var mongoose = require("mongoose");
-
 // scraping tools
 var axios = require("axios");
 var cheerio = require("cheerio");
 
 // model requirements
 var db = require("./models");
-
-var PORT = 3000;
-
-// Init Express
-var app = express();
-
-// Config for middleware
-
-// Using morgan to log results
-app.use(logger("dev"));
-// BodyParser for submissions
-// =========should the extended be true or false? I seem to remember this being changed in class.==========
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-app.use(bodyParser.json());
-// use express.static to serve the public folder as a static directory
-app.use(express.static("public"));
-
-
-var MONGODB_URI = process.env.MONGODB_URI || 
-"mongodb://localhost/mongoHeadlines";
-
-// Setting mongoose to use promises instead of callbacks
-mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI);
-
 //   Routing
-app.get("/", function(req, res) {
-    res.send("./main.handlebars");
-  });
+// app.get("/", function(req, res) {
+//     res.send("./main.handlebars");
+//   });
 
+module.exports = function (app){
 // GET route for scraping the huffington post web site
 
-app.get("/scrape", function (req, res) {
+app.get("/api/scrape", function (req, res) {
     axios.get("http://www.orlandosentinel.com/news/orange/").then(function (response) {
         // loading html body to cheerio and saving to $ for shorthand selector
         var $ = cheerio.load(response.data);
@@ -129,8 +97,4 @@ app.post("/articles/:id", function (req, res) {
             res.json(err);
         });
 });
-
-// starting the server.
-app.listen(PORT, function () {
-    console.log("App running on port " + PORT + "!");
-})
+};
